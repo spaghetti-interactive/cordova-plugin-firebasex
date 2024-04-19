@@ -20,6 +20,10 @@
 	<preference name="FIREBASE_FCM_AUTOINIT_ENABLED" default="true" />
 	<preference name="FIREBASE_ANALYTICS_WITHOUT_ADS" default="false" />
 
+	<preference name="IOS_FIREBASE_SDK_VERSION" default="10.22.0" />
+	<preference name="IOS_GOOGLE_SIGIN_VERSION" default="7.1.0" />
+	<preference name="IOS_GOOGLE_TAGMANAGER_VERSION" default="7.4.6" />
+
 	<platform name="android">
 		<preference name="ANDROID_ICON_ACCENT" default="#FF00FFFF" />
 		<preference name="ANDROID_FIREBASE_PERFORMANCE_MONITORING" default="false" />
@@ -112,9 +116,6 @@
 
 		<preference name="IOS_USE_PRECOMPILED_FIRESTORE_POD" default="false" />
 		<preference name="IOS_FCM_ENABLED" default="true" />
-		<preference name="IOS_FIREBASE_SDK_VERSION" default="10.22.0" />
-		<preference name="IOS_GOOGLE_SIGIN_VERSION" default="7.1.0" />
-		<preference name="IOS_GOOGLE_TAGMANAGER_VERSION" default="7.4.6" />
 		
 		<js-module name="FirebasePlugin" src="www/firebase.js">
 			<clobbers target="FirebasePlugin" />
