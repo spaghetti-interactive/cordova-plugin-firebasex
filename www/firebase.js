@@ -29,6 +29,7 @@ var handleAuthErrorResult = function(errorCallback){
 };
 
 var onAuthStateChangeCallback = function(){};
+var onAuthIdTokenChangeCallback = function(){};
 var onInstallationIdChangeCallback = function(){};
 var onApplicationDidBecomeActiveCallback = function(){};
 var onApplicationDidEnterBackgroundCallback = function(){};
@@ -38,6 +39,10 @@ var onApplicationDidEnterBackgroundCallback = function(){};
  ***********************/
 exports._onAuthStateChange = function(userSignedIn){
     onAuthStateChangeCallback(userSignedIn);
+};
+
+exports._onAuthIdTokenChange = function(token){
+    onAuthIdTokenChangeCallback(token);
 };
 
 exports._onInstallationIdChangeCallback = function(installationId){
@@ -168,6 +173,16 @@ exports.setUserId = function (id, success, error) {
 exports.setUserProperty = function (name, value, success, error) {
   exec(success, error, "FirebasePlugin", "setUserProperty", [name, value]);
 };
+
+// iOS-only
+exports.initiateOnDeviceConversionMeasurement = function(userIdentifier, success, error){
+    if(typeof userIdentifier !== "object"
+        || (!userIdentifier.emailAddress && !userIdentifier.phoneNumber)
+        || (userIdentifier.emailAddress && userIdentifier.phoneNumber)
+    ) throw "The 'userIdentifier' argument must be an object containing EITHER an 'emailAddress' OR 'phoneNumber' key";
+
+    exec(success, error, "FirebasePlugin", "initiateOnDeviceConversionMeasurement", [userIdentifier]);
+}
 
 exports.fetch = function (cacheExpirationSeconds, success, error) {
     var args = [];
@@ -358,6 +373,11 @@ exports.authenticateUserWithFacebook = function (accessToken, success, error,) {
     exec(success, error, "FirebasePlugin", "authenticateUserWithFacebook", [accessToken]);
 };
 
+exports.authenticateUserWithOAuth = function (success, error, providerId, customParameters, scopes) {
+    if(typeof providerId !== 'string') return error("'providerId' must be a string");
+    exec(success, error, "FirebasePlugin", "authenticateUserWithOAuth", [providerId, customParameters, scopes]);
+};
+
 exports.signInWithCredential = function (credential, success, error) {
     if(typeof credential !== 'object') return error("'credential' must be an object");
     exec(success, handleAuthErrorResult(error), "FirebasePlugin", "signInWithCredential", [credential]);
@@ -432,6 +452,11 @@ exports.deleteUser = function (success, error) {
 exports.registerAuthStateChangeListener = function(fn){
     if(typeof fn !== "function") throw "The specified argument must be a function";
     onAuthStateChangeCallback = fn;
+};
+
+exports.registerAuthIdTokenChangeListener = function(fn){
+    if(typeof fn !== "function") throw "The specified argument must be a function";
+    onAuthIdTokenChangeCallback = fn;
 };
 
 exports.useAuthEmulator = function (host, port, success, error) {

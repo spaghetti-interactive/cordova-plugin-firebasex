@@ -133,6 +133,11 @@ export interface FirebasePlugin {
         userName: string,
         userValue: string
     ): void
+    initiateOnDeviceConversionMeasurement(
+        userIdentifier: { emailAddress?:string, phoneNumber?: string },
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
     setCrashlyticsCollectionEnabled(): void
     didCrashOnPreviousExecution(
         success?: (didCrashOnPreviousExecution: boolean) => void,
@@ -260,6 +265,13 @@ export interface FirebasePlugin {
         success?: (credential:object) => void,
         error?: (err: string) => void,
     ): void
+    authenticateUserWithOAuth(
+        success: (credential:object) => void,
+        error: (err: string) => void,
+        providerId: string,
+        customParameters?: object,
+        scopes?: [string],
+    ): void
     signInWithCredential(
         credential: object,
         success?: () => void,
@@ -338,6 +350,9 @@ export interface FirebasePlugin {
     ): void
     registerAuthStateChangeListener(
         fn: (userSignedIn: boolean) => void,
+    ): void
+    registerAuthIdTokenChangeListener(
+        fn: (result: undefined|{idToken: string, providerId: string}) => void,
     ): void
     useAuthEmulator(
         host: string,
