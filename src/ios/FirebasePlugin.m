@@ -1196,7 +1196,7 @@ static FIROAuthProvider* oauthProvider;
         // If signed in with Google
         if([GIDSignIn.sharedInstance currentUser] != nil){
             // Sign out of Google
-            [GIDSignIn.sharedInstance disconnectWithCallback:^(NSError * _Nullable error) {
+            [GIDSignIn.sharedInstance disconnectWithCompletion:^(NSError * _Nullable error) {
                 if (error) {
                     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Error signing out of Google: %@", error]] callbackId:command.callbackId];
                 }
