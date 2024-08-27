@@ -1025,24 +1025,30 @@ static FIROAuthProvider* oauthProvider;
     @try {
         __weak __auto_type weakSelf = self;
         GIDConfiguration* googleSignInConfig = [[GIDConfiguration alloc] initWithClientID:[FIRApp defaultApp].options.clientID];
-        [GIDSignIn.sharedInstance signInWithConfiguration:googleSignInConfig presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        [GIDSignIn.sharedInstance signInWithPresentingViewController:self.viewController completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
           __auto_type strongSelf = weakSelf;
           if (strongSelf == nil) { return; }
 
             @try{
                 CDVPluginResult* pluginResult;
                 if (error == nil) {
-                    GIDAuthentication *authentication = user.authentication;
-                    FIRAuthCredential *credential =
-                    [FIRGoogleAuthProvider credentialWithIDToken:authentication.idToken
-                                                   accessToken:authentication.accessToken];
+                    GIDGoogleUser *user = signInResult.user; // GIDSignIn.sharedInstance.currentUser;
+                    //GIDAuthentication *authentication = user.authentication;
+                    FIRAuthCredential *credential = [FIRGoogleAuthProvider credentialWithIDToken:user.idToken
+                                                   accessToken:user.accessToken];
 
                     NSNumber* key = [[FirebasePlugin firebasePlugin] saveAuthCredential:credential];
-                    NSString *idToken = user.authentication.idToken;
+                    NSString *idToken = user.idToken.tokenString;
+                    NSString *userId = user.userID;
+                    NSString *email = user.profile.email;
+                    NSURL *imageUrl = [user.profile imageURLWithDimension:120];
                     NSMutableDictionary* result = [[NSMutableDictionary alloc] init];
                     [result setValue:@"true" forKey:@"instantVerification"];
                     [result setValue:key forKey:@"id"];
                     [result setValue:idToken forKey:@"idToken"];
+                    [result setValue:userId forKey:@"userID"];
+                    [result setValue:email forKey:@"emailAddress"];
+                    [result setValue:imageUrl forKey:@"imageUrl"];
                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
                 } else {
                     pluginResult = [self createAuthErrorResult:error];
@@ -1234,7 +1240,7 @@ static FIROAuthProvider* oauthProvider;
         // If signed in with Google
         if([GIDSignIn.sharedInstance currentUser] != nil){
             // Sign out of Google
-            [GIDSignIn.sharedInstance disconnectWithCallback:^(NSError * _Nullable error) {
+            [GIDSignIn.sharedInstance disconnectWithCompletion:^(NSError * _Nullable error) {
                 if (error) {
                     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Error signing out of Google: %@", error]] callbackId:command.callbackId];
                 }
