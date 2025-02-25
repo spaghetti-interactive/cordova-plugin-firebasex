@@ -578,15 +578,15 @@ static NSMutableArray* pendingGlobalJS = nil;
 }
 
 - (void)sendPendingNotifications {
-    if (self.notificationStack != nil && [self.notificationStack count]) {
+    if (self.notificationCallbackId != nil && self.notificationStack != nil && [self.notificationStack count]) {
         @try {
             for (NSDictionary *userInfo in self.notificationStack) {
                 [self sendNotification:userInfo];
             }
+            [self.notificationStack removeAllObjects];
         } @catch (NSException *exception) {
             [self handlePluginExceptionWithoutContext:exception];
         }
-        [self.notificationStack removeAllObjects];
     }
 }
 
