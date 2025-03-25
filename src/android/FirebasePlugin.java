@@ -249,7 +249,10 @@ public class FirebasePlugin extends CordovaPlugin {
 
                     immediateMessagePayloadDelivery = getPluginVariableFromConfigXml("FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY").equals("true");
 
-                    FirebaseApp.initializeApp(applicationContext);
+                    // FirebaseApp.initializeApp(applicationContext);
+                    if (FirebaseApp.getApps(applicationContext).isEmpty()) {
+                        FirebaseApp.initializeApp(applicationContext);
+                    }
                     mFirebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext);
 
                     authStateListener = new AuthStateListener();
