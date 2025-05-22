@@ -200,7 +200,16 @@ public class FirebasePlugin extends CordovaPlugin {
         applicationContext = cordovaActivity.getApplicationContext();
         final Bundle extras = cordovaActivity.getIntent().getExtras();
         FirebasePlugin.cordovaInterface = this.cordova;
-        firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        // firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        try{
+            firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        }
+        catch (IllegalStateException e)
+        {
+            //Firebase not initialized automatically, do it manually
+            FirebaseApp.initializeApp(applicationContext);
+            firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        }
         this.cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
@@ -240,7 +249,10 @@ public class FirebasePlugin extends CordovaPlugin {
 
                     immediateMessagePayloadDelivery = getPluginVariableFromConfigXml("FIREBASE_MESSAGING_IMMEDIATE_PAYLOAD_DELIVERY").equals("true");
 
-                    FirebaseApp.initializeApp(applicationContext);
+                    // FirebaseApp.initializeApp(applicationContext);
+                    if (FirebaseApp.getApps(applicationContext).isEmpty()) {
+                        FirebaseApp.initializeApp(applicationContext);
+                    }
                     mFirebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext);
 
                     authStateListener = new AuthStateListener();
