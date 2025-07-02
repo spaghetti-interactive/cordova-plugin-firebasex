@@ -564,7 +564,7 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
         return false;
     }
 
-    NSDictionary* aps = [mutableUserInfo objectForKey:@"aps"];
+    NSDictionary* aps = [userInfo objectForKey:@"aps"];
     if(aps == nil){
         return false;
     }
