@@ -401,7 +401,9 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
         bool hasBadge = [aps objectForKey:@"badge"] != nil;
         bool hasSound = [aps objectForKey:@"sound"] != nil;
 
-        if(showForegroundNotification){
+        bool isContentAvailable = [self isContentAvailable:mutableUserInfo];
+
+        if(showForegroundNotification && isContentAvailable){
             [FirebasePlugin.firebasePlugin _logMessage:[NSString stringWithFormat:@"willPresentNotification: foreground notification alert=%@, badge=%@, sound=%@", hasAlert ? @"YES" : @"NO", hasBadge ? @"YES" : @"NO", hasSound ? @"YES" : @"NO"]];
             if(hasAlert && hasBadge && hasSound){
                 completionHandler(UNNotificationPresentationOptionAlert + UNNotificationPresentationOptionBadge + UNNotificationPresentationOptionSound);
